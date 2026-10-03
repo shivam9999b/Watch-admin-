@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | All Watch</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0b0b0b;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    :root {
+      --gold: #d6b56d;
+      --panel: #151515;
+      --border: #303030;
+      --muted: #aaa;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    aside {
+      width: 230px;
+      background: #111;
+      border-right: 1px solid var(--border);
+      padding: 25px 15px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      color: var(--gold);
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      padding: 0 10px 30px;
+    }
+
+    .nav-title {
+      color: #777;
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 15px 10px 10px;
+    }
+
+    .nav-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 13px 12px;
+      color: #ccc;
+      background: transparent;
+      border: 0;
+      border-radius: 7px;
+      cursor: pointer;
+      margin: 3px 0;
+      font-size: 14px;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #2a2418;
+      color: var(--gold);
+    }
+
+    .shop-link {
+      display: block;
+      margin: 25px 10px 0;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 25px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .admin-badge {
+      color: var(--gold);
+      border: 1px solid #594925;
+      background: #211b10;
+      border-radius: 20px;
+      padding: 9px 13px;
+      font-size: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .stat-label {
+      color: #aaa;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--gold);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .panel {
+      margin-bottom: 20px;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .btn {
+      background: var(--gold);
+      color: #111;
+      border: none;
+      border-radius: 7px;
+      padding: 11px 15px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn.secondary {
+      background: #252525;
+      color: #eee;
+      border: 1px solid #444;
+    }
+
+    .btn.danger {
+      background: #3a1717;
+      color: #ffb5b5;
+      border: 1px solid #673030;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 550px;
+    }
+
+    th,
+    td {
+      padding: 14px 10px;
+      border-bottom: 1px solid #303030;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      color: #999;
+      font-weight: normal;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      background: #173222;
+      color: #9be0b3;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field label {
+      display: block;
+      color: #bbb;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 12px;
+      background: #090909;
+      color: white;
+      border: 1px solid #393939;
+      border-radius: 7px;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--gold);
+    }
+
+    .notice {
+      color: #e6d4a9;
+      background: #211b10;
+      border: 1px solid #4c3c1d;
+      padding: 13px;
+      border-radius: 8px;
+      line-height: 1.5;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .empty {
+      color: #999;
+      font-size: 14px;
+      padding: 15px 0;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      aside {
+        width: 190px;
+      }
+
+      main {
+        padding: 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .layout {
+        display: block;
+      }
+
+      aside {
+        width: 100%;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        padding: 16px 12px;
+      }
+
+      .logo {
+        padding: 0 5px 14px;
+      }
+
+      .nav-title,
+      .shop-link {
+        display: none;
+      }
+
+      .nav-list {
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+      }
+
+      .nav-btn {
+        width: auto;
+        white-space: nowrap;
+        margin: 0;
+        padding: 11px;
+      }
+
+      main {
+        padding: 18px 12px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <aside>
+    <div class="logo">ALL WATCH</div>
+
+    <div class="nav-title">Management</div>
+
+    <nav class="nav-list">
+      <button class="nav-btn active" data-section="dashboard">
+        ◈ Dashboard
+      </button>
+      <button class="nav-btn" data-section="products">
+        ◷ Products
+      </button>
+      <button class="nav-btn" data-section="orders">
+        ▣ Orders
+      </button>
+      <button class="nav-btn" data-section="sales">
+        ₹ Sales
+      </button>
+    </nav>
+
+    <a class="shop-link" href="index.html">← Visit Store</a>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <p class="muted">All Watch store management</p>
+      </div>
+      <div class="actions"><span class="admin-badge">Admin Panel</span><button class="btn secondary" id="signOutBtn">Sign out</button></div>
+    </div>
+
+    <div class="notice">Connecting to Supabase…</div>
+
+    <section class="section active" id="dashboard">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Products</div>
+          <div class="stat-value" id="productCount">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value" id="orderCount">0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Demo Revenue</div>
+          <div class="stat-value" id="revenue">₹0</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Pending Orders</div>
+          <div class="stat-value" id="pendingCount">0</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-heading">
+          <h2>Quick Actions</h2>
+        </div>
+
+        <div class="actions">
+          <button class="btn" data-go="products">Manage Products</button>
+          <button class="btn secondary" data-go="orders">View Orders</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Recent Orders</h2>
+        <p class="empty">
+          अभी कोई वास्तविक order नहीं दिखाया जा सकता। Orders देखने के लिए
+          database connection जोड़ना होगा।
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="panel">
+        <div class="panel-heading">
+          <h2>Product Management</h2>
+          <button class="btn" id="addProductBtn">+ Add Product</button>
+        </div>
+
+        <form id="productForm" hidden>
+          <div class="form-grid">
+            <div class="field">
+              <label for="productName">Product Name</label>
+              <input id="productName" required placeholder="Luxury Gold Watch">
+            </div>
+
+            <div class="field">
+              <label for="productPrice">Price (₹)</label>
+              <input id="productPrice" type="number" min="1" required placeholder="2999">
+            </div>
+
+            <div class="field">
+              <label for="productCategory">Category</label>
+              <select id="productCategory" required>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
+                <option value="Smart Watch">Smart Watch</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Wall Clock">Wall Clock</option>
+                <option value="Accessories">Accessories</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="productImageFile">Upload Product Image</label>
+              <input id="productImageFile" type="file" accept="image/*">
+              <p class="muted" style="margin-top:7px">JPG, PNG, WebP आदि। अधिकतम 5 MB.</p>
+              <img id="productImagePreview" alt="Product image preview" hidden
+                   style="max-width:180px;max-height:180px;object-fit:contain;margin-top:10px;border-radius:8px;border:1px solid #393939">
+            </div>
+            <div class="field">
+              <label for="productImage">Image URL (optional)</label>
+              <input id="productImage" type="url" placeholder="https://example.com/watch.jpg">
+              <p class="muted" style="margin-top:7px">फाइल upload करेंगे तो URL अपने-आप भर जाएगा।</p>
+            </div>
+          </div>
+
+          <br>
+          <div class="actions">
+            <button class="btn" type="submit">Save Product</button>
+            <button class="btn secondary" type="button" id="cancelProductBtn">
+              Cancel
+            </button>
+          </div>
+          <br>
+        </form>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="productTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="orders">
+      <div class="panel">
+        <div class="panel-heading">
+          <h2>Order Management</h2>
+          
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="orderTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sales">
+      <div class="panel">
+        <h2>Sales Overview</h2>
+        <p class="empty">
+          यहाँ वास्तविक sales, payment status और revenue दिखाने के लिए
+          database में सुरक्षित तरीके से save हुए orders चाहिए।
+        </p>
+        <p class="muted">
+          Revenue में Cancelled orders शामिल नहीं हैं। Online payments अभी enabled नहीं हैं।
+        </p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script type="module" src="admin.js"></script>
+
+</body>
+</html>
